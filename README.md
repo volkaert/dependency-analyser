@@ -20,5 +20,53 @@ It is linked to:
 - a `TaggedDependencyList` that is the list of the dependencies of the project with tags for each dependency
 
 A `TaggedDependencyRepository` associates dependency names with tags. 
-For example, the `spring-hibernate` may be associated with the tags `Spring`, `Hibernate`, `JPA`, `Database`, `open-source`.
+For example, the `org.springframework/spring-hibernate` may be associated with the tags `Spring`, `Hibernate`, `JPA`, `Database`, `open-source`.
+
+### Models
+
+A `DependencyAnalysis` contains the following properties:
+- `id`
+- `executionDate`
+- `projectId`
+- `scannedDependencyListId`
+- `taggedDependencyListId`
+- `taggedDependencyRepositoryId`
+
+A `Project` contains the following properties:
+- `id`
+- `name`
+- `repositoryURL`
+- `repositoryLogin`
+- `repositoryPassword`
+- `organizationalUnit`
+- `lastAnalysisId`
+
+A `ScannedDependencyList` contains the following properties:
+- `id`
+- `dependencies`: comma-separated list of dependencies, ex: "org.projectlombok/lombok, org.springframework.boot/spring-boot-starter-security, com.h2database/h2"
+
+A `TaggedDependencyList` contains the following properties:
+- `id`
+- `dependencies`: list of
+  - `dependency`: ex: "org.springframework/spring-hibernate"
+  - `tags`: comma-separated list of tags, ex: "Spring, Hibernate, JPA, Database, open-source"
+
+A `TaggedDependencyRepository` contains the following properties:
+- `id`
+- `creationDate`
+- `modificationDate`
+- `version`
+- `dependencies`: list of
+    - `dependency`: ex: "org.springframework/spring-hibernate"
+    - `tags`: comma-separated list of tags, ex: "Spring, Hibernate, JPA, Database, open-source"
+
+
+## How to run a Dependency Analysis ?
+
+To run a Dependency Analysis for the first time:
+- Create a `Project` instance
+- Get the list of dependencies of the project and create a `ScannedDependencyList` instance
+- Execute the Analysis for the given `Project` instance and `ScannedDependencyList` instance (optionally, with a given `TaggedDependencyRepository` id; if not provided, the default repository will be used). The following instances will be created during the analysis:
+  - a `TaggedDependencyList` instance will be created. It maps dependencies with tags.
+  - a `DependencyAnalysis` instance will be created. It makes links between the `Project`, `ScannedDependencyList`, `taggedDependencyList` and `taggedDependencyRepository` instances.
 
