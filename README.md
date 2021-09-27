@@ -22,6 +22,19 @@ It is linked to:
 A `TaggedDependencyRepository` associates dependency names with tags. 
 For example, the `org.springframework/spring-hibernate` may be associated with the tags `Spring`, `Hibernate`, `JPA`, `Database`, `open-source`.
 
+A `UntaggedDependencyRepository` lists all the scanned dependencies for which we could not associate tags.
+This list is helpful to know the dependencies that should be registered in the `TaggedDependencyRepository`.
+
+A `ScannedDependencyList` instance may be created during the analysis (the dependencies are then scanned from the `repositoryURL` 
+property of the `Project` instance) but may also be created *BEFORE* the analysis. It may be useful to create this scanned
+dependency list before the analysis  if you do NOT want to rely on the built-in dependency scan mechanism provided by default 
+by the Analyser (because you want to use your own implementation of the dependency scan mechanism, may be because it is
+smarter or does some extra stuff).
+If you want the Analyser to use an already created `ScannedDependencyList` instance, when you will create a `DependencyAnalysis` instance,
+just fill-in the id of the already created `ScannedDependencyList` instance. 
+If this id is set to null, then the Analyser will scan the dependencies found from the `repositoryURL` property of the `Project` instance. 
+
+
 ### Models
 
 A `DependencyAnalysis` contains the following properties:
