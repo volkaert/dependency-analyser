@@ -14,21 +14,21 @@ import java.util.List;
 public class ProjectService {
 
     @Autowired
-    ProjectRepository projectRepository;
+    ProjectRepository repository;
 
     public List<Project> getProjects() {
-        return projectRepository.findAll();
+        return repository.findAll();
     }
 
     public Project getProject(Long id) {
-        return projectRepository.findById(id).orElse(null);
+        return repository.findById(id).orElse(null);
     }
 
     public Project saveProject(Project project) {
-        return projectRepository.save(project);
+        return repository.save(project);
     }
 
     public void deleteProject(Long id) {
-        projectRepository.deleteById(id);
+        repository.deleteById(id);
     }
 }

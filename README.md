@@ -108,4 +108,27 @@ curl \
 curl --request DELETE http://localhost:8080/projects/10
 ```
 
+### Examples of API calls for the ScannedDependencyList resource
+
+```
+curl localhost:8080/scanned-dependency-lists | jq
+
+curl localhost:8080/scanned-dependency-lists/1 | jq
+
+curl \
+  --request POST \
+  --header "Content-Type: application/json" \
+  --data '{ "dependencies": "org.projectlombok/lombok, org.springframework.boot/spring-boot-starter-web" }' \
+  http://localhost:8080/scanned-dependency-lists | jq
+
+curl \
+  --request PUT \
+  --header "Content-Type: application/json" \
+  --data '{ "id": "10", "dependencies": "org.projectlombok/lombok, org.springframework.boot/spring-boot-starter-web, org.springframework.boot/spring-boot-starter-data-jpa" }' \
+  http://localhost:8080/scanned-dependency-lists/10 | jq
+
+curl --request DELETE http://localhost:8080/scanned-dependency-lists/10
+```
+
+
 

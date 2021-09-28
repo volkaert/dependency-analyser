@@ -19,7 +19,7 @@ import java.util.List;
 public class ProjectRestController {
 
     @Autowired
-    ProjectService projectService;
+    ProjectService service;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProjectRestController.class);
 
@@ -28,7 +28,7 @@ public class ProjectRestController {
         String verbAndPath = String.format("GET /projects");
         LOGGER.info(verbAndPath + " called");
         try {
-            return ResponseEntity.ok(projectService.getProjects());
+            return ResponseEntity.ok(service.getProjects());
         } catch (Exception ex) {
             String errMsg = String.format("Error occurred while loading the list of projects");
             LOGGER.error(errMsg, ex);
@@ -41,7 +41,7 @@ public class ProjectRestController {
         String verbAndPath = String.format("GET /projects/%s", id);
         LOGGER.info(verbAndPath + " called");
         try {
-            Project project = projectService.getProject(id);
+            Project project = service.getProject(id);
             if (project != null)
                 return ResponseEntity.ok(project);
             else
@@ -60,7 +60,7 @@ public class ProjectRestController {
         if (project.getId() != null)
             return AnalyserExceptionResponse.build(HttpStatus.BAD_REQUEST, "Id must be null for a POST(=create) operation", verbAndPath);
         try {
-            return ResponseEntity.ok(projectService.saveProject(project));
+            return ResponseEntity.ok(service.saveProject(project));
         } catch (Exception ex) {
             String errMsg = String.format("Error occurred while creating the project");
             LOGGER.error(errMsg, ex);
@@ -77,7 +77,7 @@ public class ProjectRestController {
         if (! project.getId().equals(id))
             return AnalyserExceptionResponse.build(HttpStatus.BAD_REQUEST, "Inconsistent ids between id in path param and id in the body", verbAndPath);
         try {
-            return ResponseEntity.ok(projectService.saveProject(project));
+            return ResponseEntity.ok(service.saveProject(project));
         } catch (Exception ex) {
             String errMsg = String.format("Error occurred while updating the project %s", id);
             LOGGER.error(errMsg, ex);
@@ -90,7 +90,7 @@ public class ProjectRestController {
         String verbAndPath = String.format("DELETE /projects/%s", id);
         LOGGER.info(verbAndPath + " called");
         try {
-            projectService.deleteProject(id);
+            service.deleteProject(id);
             return ResponseEntity.noContent().build();
         } catch (Exception ex) {
             String errMsg = String.format("Error occurred while deleting the project %s", id);
