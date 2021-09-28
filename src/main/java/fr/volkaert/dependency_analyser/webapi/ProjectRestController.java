@@ -53,7 +53,7 @@ public class ProjectRestController {
         }
     }
 
-    @PostMapping(value="/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Project> insertProject(@RequestBody Project project) {
         String verbAndPath = String.format("POST /projects");
         LOGGER.info(verbAndPath + " called");

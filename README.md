@@ -83,3 +83,29 @@ To run a Dependency Analysis for the first time:
   - a `TaggedDependencyList` instance will be created. It maps dependencies with tags.
   - a `DependencyAnalysis` instance will be created. It makes links between the `Project`, `ScannedDependencyList`, `taggedDependencyList` and `taggedDependencyRepository` instances.
 
+
+## Examples of API calls
+
+### Examples of API calls for the Project resource
+
+```
+curl localhost:8080/projects | jq
+
+curl localhost:8080/projects/1 | jq
+
+curl \
+  --request POST \
+  --header "Content-Type: application/json" \
+  --data '{ "name": "Project#10" }' \
+  http://localhost:8080/projects | jq
+
+curl \
+  --request PUT \
+  --header "Content-Type: application/json" \
+  --data '{ "id": "10", "name": "new name for Project#10" }' \
+  http://localhost:8080/projects/10 | jq
+
+curl --request DELETE http://localhost:8080/projects/10
+```
+
+
