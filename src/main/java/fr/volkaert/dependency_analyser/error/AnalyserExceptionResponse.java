@@ -2,6 +2,7 @@ package fr.volkaert.dependency_analyser.error;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.time.Instant;
 
@@ -25,5 +26,13 @@ public class AnalyserExceptionResponse {
         this.status = HttpStatus.INTERNAL_SERVER_ERROR.value();
         this.error = HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase();
         this.message = ex.getMessage();
+    }
+
+    public static ResponseEntity build(HttpStatus status, String msg, String path) {
+        return new ResponseEntity(new AnalyserExceptionResponse(new AnalyserException(status, msg, path)), status);
+    }
+
+    public static ResponseEntity build(HttpStatus status, String msg, String path, Exception ex) {
+        return new ResponseEntity(new AnalyserExceptionResponse(new AnalyserException(status, msg, ex, path)), status);
     }
 }

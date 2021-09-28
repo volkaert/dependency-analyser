@@ -32,7 +32,7 @@ public class ProjectRestController {
         } catch (Exception ex) {
             String errMsg = String.format("Error occurred while loading the list of projects");
             LOGGER.error(errMsg, ex);
-            return new ResponseEntity(new AnalyserExceptionResponse(new AnalyserException(HttpStatus.INTERNAL_SERVER_ERROR, errMsg, ex, verbAndPath)), HttpStatus.INTERNAL_SERVER_ERROR);
+            return AnalyserExceptionResponse.build(HttpStatus.INTERNAL_SERVER_ERROR, errMsg, verbAndPath, ex);
         }
     }
 
@@ -45,11 +45,11 @@ public class ProjectRestController {
             if (project != null)
                 return ResponseEntity.ok(project);
             else
-                return new ResponseEntity(new AnalyserExceptionResponse(new AnalyserException(HttpStatus.NOT_FOUND, "Project " + id + " not found", verbAndPath)), HttpStatus.NOT_FOUND);
+                return AnalyserExceptionResponse.build(HttpStatus.NOT_FOUND, "Project " + id + " not found", verbAndPath);
         } catch (Exception ex) {
             String errMsg = String.format("Error occurred while loading the project %s", id);
             LOGGER.error(errMsg, ex);
-            return new ResponseEntity(new AnalyserExceptionResponse(new AnalyserException(HttpStatus.INTERNAL_SERVER_ERROR, errMsg, ex, verbAndPath)), HttpStatus.INTERNAL_SERVER_ERROR);
+            return AnalyserExceptionResponse.build(HttpStatus.INTERNAL_SERVER_ERROR, errMsg, verbAndPath, ex);
         }
     }
 
@@ -58,13 +58,13 @@ public class ProjectRestController {
         String verbAndPath = String.format("POST /projects");
         LOGGER.info(verbAndPath + " called");
         if (project.getId() != null)
-            return new ResponseEntity(new AnalyserExceptionResponse(new AnalyserException(HttpStatus.BAD_REQUEST, "Id must be null for a POST(=create) operation", verbAndPath)), HttpStatus.BAD_REQUEST);
+            return AnalyserExceptionResponse.build(HttpStatus.BAD_REQUEST, "Id must be null for a POST(=create) operation", verbAndPath);
         try {
             return ResponseEntity.ok(projectService.saveProject(project));
         } catch (Exception ex) {
             String errMsg = String.format("Error occurred while creating the project");
             LOGGER.error(errMsg, ex);
-            return new ResponseEntity(new AnalyserExceptionResponse(new AnalyserException(HttpStatus.INTERNAL_SERVER_ERROR, errMsg, ex, verbAndPath)), HttpStatus.INTERNAL_SERVER_ERROR);
+            return AnalyserExceptionResponse.build(HttpStatus.INTERNAL_SERVER_ERROR, errMsg, verbAndPath, ex);
         }
     }
 
@@ -73,15 +73,15 @@ public class ProjectRestController {
         String verbAndPath = String.format("PUT /projects/%s", id);
         LOGGER.info(verbAndPath + " called");
         if (project.getId() == null)
-            return new ResponseEntity(new AnalyserExceptionResponse(new AnalyserException(HttpStatus.BAD_REQUEST, "Id must not be null for a PUT(=update) operation", verbAndPath)), HttpStatus.BAD_REQUEST);
+            return AnalyserExceptionResponse.build(HttpStatus.BAD_REQUEST, "Id must not be null for a PUT(=update) operation", verbAndPath);
         if (! project.getId().equals(id))
-            return new ResponseEntity(new AnalyserExceptionResponse(new AnalyserException(HttpStatus.BAD_REQUEST, "Inconsistent ids between id in path param and id in the body", verbAndPath)), HttpStatus.BAD_REQUEST);
+            return AnalyserExceptionResponse.build(HttpStatus.BAD_REQUEST, "Inconsistent ids between id in path param and id in the body", verbAndPath);
         try {
             return ResponseEntity.ok(projectService.saveProject(project));
         } catch (Exception ex) {
             String errMsg = String.format("Error occurred while updating the project %s", id);
             LOGGER.error(errMsg, ex);
-            return new ResponseEntity(new AnalyserExceptionResponse(new AnalyserException(HttpStatus.INTERNAL_SERVER_ERROR, errMsg, ex, verbAndPath)), HttpStatus.INTERNAL_SERVER_ERROR);
+            return AnalyserExceptionResponse.build(HttpStatus.INTERNAL_SERVER_ERROR, errMsg, verbAndPath, ex);
         }
     }
 
@@ -95,7 +95,7 @@ public class ProjectRestController {
         } catch (Exception ex) {
             String errMsg = String.format("Error occurred while deleting the project %s", id);
             LOGGER.error(errMsg, ex);
-            return new ResponseEntity(new AnalyserExceptionResponse(new AnalyserException(HttpStatus.INTERNAL_SERVER_ERROR, errMsg, ex, verbAndPath)), HttpStatus.INTERNAL_SERVER_ERROR);
+            return AnalyserExceptionResponse.build(HttpStatus.INTERNAL_SERVER_ERROR, errMsg, verbAndPath, ex);
         }
     }
 }
