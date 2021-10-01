@@ -1,6 +1,5 @@
 package fr.volkaert.dependency_analyser.service;
 
-
 import fr.volkaert.dependency_analyser.model.Project;
 import fr.volkaert.dependency_analyser.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
