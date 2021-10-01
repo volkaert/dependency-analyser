@@ -153,4 +153,15 @@ curl \
 curl --request DELETE http://localhost:8080/tagged-dependency-lists/10
 ```
 
+## How to write the dependency tree in a file ?
 
+./mvnw dependency:tree -DoutputFile=dep-tree.txt
+
+
+## How to send the dependency tree file to some API ?
+
+curl 
+  --request POST \
+  --header "Content-Type: text/plain" \
+  --data "@dep-tree.txt" \
+  http://host:port/upload
