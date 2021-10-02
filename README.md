@@ -160,8 +160,8 @@ curl --request DELETE http://localhost:8080/tagged-dependency-lists/10
 
 ## How to send the dependency tree file to some API ?
 
-curl 
+curl \
   --request POST \
   --header "Content-Type: text/plain" \
-  --data "@dep-tree.txt" \
-  http://host:port/upload
+  --data-binary "@dep-tree.txt" \
+  http://localhost:8080/dependency-analysis/maven-dependency-tree/upload-and-run

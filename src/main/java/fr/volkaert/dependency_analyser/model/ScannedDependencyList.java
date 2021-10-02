@@ -14,5 +14,6 @@ public class ScannedDependencyList {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
+    @Lob
     private String dependencies; // comma-separated list of dependencies, ex: "org.projectlombok/lombok, org.springframework.boot/spring-boot-starter-security, com.h2database/h2"
 }

@@ -100,4 +100,17 @@ public class DependencyAnalysisRestController {
             return AnalyserExceptionResponse.build(HttpStatus.INTERNAL_SERVER_ERROR, errMsg, verbAndPath, ex);
         }
     }
+
+    @PostMapping(value="/maven-dependency-tree/upload-and-run", consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DependencyAnalysis> uploadMavenDependencyTreeAndRunAnalysis(@RequestBody String mavenDependencyTree) {
+        String verbAndPath = String.format("POST /dependency-analysis/maven-dependency-tree/upload-and-run");
+        LOGGER.info(verbAndPath + " called");
+        try {
+            return ResponseEntity.ok(service.uploadMavenDependencyTreeAndRunAnalysis(mavenDependencyTree));
+        } catch (Exception ex) {
+            String errMsg = String.format("Error occurred while running the dependency analysis from maven dependency tree");
+            LOGGER.error(errMsg, ex);
+            return AnalyserExceptionResponse.build(HttpStatus.INTERNAL_SERVER_ERROR, errMsg, verbAndPath, ex);
+        }
+    }
 }
