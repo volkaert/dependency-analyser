@@ -163,5 +163,8 @@ curl --request DELETE http://localhost:8080/tagged-dependency-lists/10
 curl \
   --request POST \
   --header "Content-Type: text/plain" \
+  --header "X-DEPAN-PROJECT-NAME: myProjectName" \
+  --header "X-DEPAN-APPLICATION-CODE: myAppCode" \
+  --header "X-DEPAN-ORGANIZAIONAL-UNIT: myOrgUnit" \
   --data-binary "@dep-tree.txt" \
   http://localhost:8080/dependency-analysis/maven-dependency-tree/upload-and-run

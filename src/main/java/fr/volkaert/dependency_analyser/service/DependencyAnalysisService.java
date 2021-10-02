@@ -24,6 +24,9 @@ public class DependencyAnalysisService {
     DependencyAnalysisRepository repository;
 
     @Autowired
+    ProjectService projectService;
+
+    @Autowired
     ScannedDependencyListService scannedDependencyListService;
 
     @Autowired
@@ -48,7 +51,10 @@ public class DependencyAnalysisService {
         repository.deleteById(id);
     }
 
-    public DependencyAnalysis uploadMavenDependencyTreeAndRunAnalysis(String mavenDependencyTreeAsString) {
+    public DependencyAnalysis uploadMavenDependencyTreeAndRunAnalysis(String mavenDependencyTreeAsString,
+                                                                      String projectName,
+                                                                      String applicationCode,
+                                                                      String organizationalUnit) {
         LOGGER.info("Maven Dependency Tree is {}", mavenDependencyTreeAsString);
 
         Map<String, String> taggedDependencyMap = new HashMap<>();
@@ -111,11 +117,22 @@ public class DependencyAnalysisService {
 
         TaggedDependencyList savedTaggedDependencyList = taggedDependencyListService.saveDependencies(taggedDependencyList);
 
+        Project project = new Project();
+        project.setName(projectName);
+        project.setApplicationCode(applicationCode);
+        project.setOrganizationalUnit(organizationalUnit);
+        Project savedProject = projectService.saveProject(project);
+
         DependencyAnalysis dependencyAnalysis = new DependencyAnalysis();
         dependencyAnalysis.setExecutionDate(Instant.now());
+        dependencyAnalysis.setProjectId(savedProject.getId());
         dependencyAnalysis.setScannedDependencyListId(savedScannedDependencyList.getId());
         dependencyAnalysis.setTaggedDependencyListId(savedTaggedDependencyList.getId());
         DependencyAnalysis savedDependencyAnalysis = saveDependencyAnalysis(dependencyAnalysis);
+
+        savedProject.setLastAnalysisId(savedDependencyAnalysis.getId());
+        projectService.saveProject(savedProject);
+
         return savedDependencyAnalysis;
     }
 }
