@@ -32,6 +32,9 @@ public class DependencyAnalysisService {
     @Autowired
     TaggedDependencyListService taggedDependencyListService;
 
+    @Autowired
+    DependencyMetricsService dependencyMetricsService;
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DependencyAnalysisService.class);
 
@@ -100,13 +103,26 @@ public class DependencyAnalysisService {
             else {
                 TaggedDependency taggedDependency = new TaggedDependency();
                 taggedDependency.setDependency(groupIdAndArtifactId);
-                taggedDependency.setTags("NO_TAGS_FOUND");
+                taggedDependency.setTags(null);
                 taggedDependencyList.getDependencies().add(taggedDependency);
             }
 
             if (scannedDependenciesStringBuilder.length() > 0)
                 scannedDependenciesStringBuilder.append(", ");
             scannedDependenciesStringBuilder.append(groupIdAndArtifactId);
+
+            DependencyMetrics metrics = dependencyMetricsService.getMetrics(groupIdAndArtifactId);
+            if (metrics == null) {
+                metrics = new DependencyMetrics();
+                metrics.setDependency(groupIdAndArtifactId);
+            }
+            metrics.setTags(dependencyTags);
+            metrics.setScannedCount(metrics.getScannedCount()+1);
+            if (dependencyTags != null) {
+                metrics.setTaggedCount(metrics.getTaggedCount()+1);
+            }
+            dependencyMetricsService.saveMetrics(metrics);
+
         }
         String scannedDependenciesAsString = scannedDependenciesStringBuilder.toString();
         //LOGGER.info("scannedDependenciesAsString is {}", scannedDependenciesAsString);

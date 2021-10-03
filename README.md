@@ -73,6 +73,12 @@ A `TaggedDependencyRepository` contains the following properties:
     - `dependency`: ex: "org.springframework/spring-hibernate"
     - `tags`: comma-separated list of tags, ex: "Spring, Hibernate, JPA, Database, open-source"
 
+A `DependencyMetrics` contains the following properties:
+- `dependency`
+- `tags`
+- `scannedCount`
+- `taggedCount`
+
 
 ## How to run a Dependency Analysis ?
 
@@ -153,13 +159,38 @@ curl \
 curl --request DELETE http://localhost:8080/tagged-dependency-lists/10
 ```
 
-## How to write the dependency tree in a file ?
 
+### Examples of API calls for the DependencyMetrics resource
+
+```
+curl localhost:8080/dependency-metrics | jq
+```
+
+
+
+## Tests
+
+### Create a repository of tags for dependencies
+
+```
+curl \
+--request POST \
+--header "Content-Type: application/json" \
+--data '{ "dependencies": [ { "dependency": "org.projectlombok/lombok", "tags": "lombok, open-source" } ] }' \
+http://localhost:8080/tagged-dependency-lists | jq
+```
+
+
+### Write the Maven dependency tree into a file
+
+```
 ./mvnw dependency:tree -DoutputFile=dep-tree.txt
+```
 
 
-## How to send the dependency tree file to some API ?
+### Send the Maven dependency tree file to the Analyser API
 
+```
 curl \
   --request POST \
   --header "Content-Type: text/plain" \
@@ -168,3 +199,17 @@ curl \
   --header "X-DEPAN-ORGANIZAIONAL-UNIT: myOrgUnit" \
   --data-binary "@dep-tree.txt" \
   http://localhost:8080/dependency-analysis/maven-dependency-tree/upload-and-run
+```
+Keep in mind the returned `scannedDependencyListId` and `taggedDependencyListId` (for example 11 and 2).
+
+### View the scanned and tagged dependencies from the dependency anaylsis
+```
+curl localhost:8080/scanned-dependency-lists/11 | jq
+curl localhost:8080/tagged-dependency-lists/2 | jq
+```
+
+
+### Get metrics about the scanned and tagged dependencies
+```
+curl localhost:8080/dependency-metrics | jq
+```

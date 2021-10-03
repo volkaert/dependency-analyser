@@ -8,14 +8,18 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name="tagged_dependency")
-public class TaggedDependency {
-    @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
+@Table(name="dependency_metrics")
+public class DependencyMetrics {
+    //@Id
+    //@GeneratedValue(strategy= GenerationType.IDENTITY)
+    //private Long id;
 
+    @Id
     private String dependency;  // ex: "org.springframework/spring-hibernate"
 
     @Lob
     private String tags;        // comma-separated list of tags, ex: "Spring, Hibernate, JPA, Database, open-source"
+
+    private long scannedCount;
+    private long taggedCount;
 }
