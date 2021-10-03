@@ -64,6 +64,7 @@ public class DependencyAnalysisService {
         TaggedDependencyList TaggedDependencyRepo = taggedDependencyListService.getDependencies(1L);
         Set<TaggedDependency> taggedDependencySet = TaggedDependencyRepo.getDependencies();
         for (TaggedDependency taggedDependency : taggedDependencySet) {
+            //LOGGER.info("taggedDependencyMap.put({}, {})", taggedDependency.getDependency(), taggedDependency.getTags());
             taggedDependencyMap.put(taggedDependency.getDependency(), taggedDependency.getTags());
         }
 
@@ -90,17 +91,19 @@ public class DependencyAnalysisService {
                 }
             }
 
-            //LOGGER.info("dep is {}, {}, {}, {}, {}", groupId, artifactId, dependencyType, version, compileOrRuntime);
+            LOGGER.info("dep is {}, {}, {}, {}, {}", groupId, artifactId, dependencyType, version, compileOrRuntime);
 
             String groupIdAndArtifactId = groupId + "/" + artifactId;
             String dependencyTags = taggedDependencyMap.get(groupIdAndArtifactId);
             if (dependencyTags != null) {
+                //LOGGER.info("dependencyTags is NOT null for " + groupIdAndArtifactId);
                 TaggedDependency taggedDependency = new TaggedDependency();
                 taggedDependency.setDependency(groupIdAndArtifactId);
                 taggedDependency.setTags(dependencyTags);
                 taggedDependencyList.getDependencies().add(taggedDependency);
             }
             else {
+                //LOGGER.info("dependencyTags is null for " + groupIdAndArtifactId);
                 TaggedDependency taggedDependency = new TaggedDependency();
                 taggedDependency.setDependency(groupIdAndArtifactId);
                 taggedDependency.setTags(null);

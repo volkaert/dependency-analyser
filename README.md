@@ -70,8 +70,8 @@ A `TaggedDependencyRepository` contains the following properties:
 - `modificationDate`
 - `version`
 - `dependencies`: list of
-    - `dependency`: ex: "org.springframework/spring-hibernate"
-    - `tags`: comma-separated list of tags, ex: "Spring, Hibernate, JPA, Database, open-source"
+  - `dependency`: ex: "org.springframework/spring-hibernate"
+  - `tags`: comma-separated list of tags, ex: "Spring, Hibernate, JPA, Database, open-source"
 
 A `DependencyMetrics` contains the following properties:
 - `dependency`
@@ -79,15 +79,91 @@ A `DependencyMetrics` contains the following properties:
 - `scannedCount`
 - `taggedCount`
 
+A `Query` contains the following properties:
+- `analysisId`
+- `queries`: list of
+  - `name`: ex: "Open-source Database", "Open-Source Application Server", "Proprietary Middleware"...
+  - `tags`: ex: "database, open-source", "application server, open-source", "middleware, proprietary"...
 
-## How to run a Dependency Analysis ?
+A `QueryResult` contains the following properties:
+- `results`: list of 
+  - `name`: ex: "Open-source Database", "Open-Source Application Server", "Proprietary Middleware"...
+  - `tags`: ex: "database, open-source", "application server, open-source", "middleware, proprietary"...
+  - `matched`: true if at least one dependency matches the tags
+  - `dependencies`: list of the dependencies that match tha tags
 
-To run a Dependency Analysis for the first time:
-- Create a `Project` instance
-- Get the list of dependencies of the project and create a `ScannedDependencyList` instance
-- Execute the Analysis for the given `Project` instance and `ScannedDependencyList` instance (optionally, with a given `TaggedDependencyRepository` id; if not provided, the default repository will be used). The following instances will be created during the analysis:
-  - a `TaggedDependencyList` instance will be created. It maps dependencies with tags.
-  - a `DependencyAnalysis` instance will be created. It makes links between the `Project`, `ScannedDependencyList`, `taggedDependencyList` and `taggedDependencyRepository` instances.
+
+
+## Tests
+
+### Create a repository of tags for dependencies
+
+```
+curl \
+-X POST http://localhost:8080/tagged-dependency-lists \
+-H 'Content-Type: application/json; charset=utf-8' \
+--data-binary @- << EOF
+{ 
+  "dependencies": [
+    { "dependency": "org.projectlombok/lombok", "tags": "lombok, open-source" },
+    { "dependency": "org.springframework.boot/spring-boot-starter-web", "tags": "spring, web, open-source" },
+    { "dependency": "org.springframework.boot/spring-boot-starter-data-jpa", "tags": "spring, database, db, jpa, open-source" },
+    { "dependency": "org.springframework.boot/spring-boot-starter-actuator", "tags": "spring, actuator, monitoring, open-source" },
+    { "dependency": "com.h2database/h2", "tags": "database, db, h2, open-source" }
+  ] 
+}
+EOF
+```
+
+
+### Write the Maven dependency tree into a file
+
+```
+./mvnw dependency:tree -DoutputFile=dep-tree.txt
+```
+
+
+### Send the Maven dependency tree file to the Analyser API
+
+```
+curl \
+  --request POST \
+  --header "Content-Type: text/plain" \
+  --header "X-DEPAN-PROJECT-NAME: myProjectName" \
+  --header "X-DEPAN-APPLICATION-CODE: myAppCode" \
+  --header "X-DEPAN-ORGANIZAIONAL-UNIT: myOrgUnit" \
+  --data-binary "@dep-tree.txt" \
+  http://localhost:8080/dependency-analysis/maven-dependency-tree/upload-and-run
+```
+Keep in mind the returned `scannedDependencyListId` and `taggedDependencyListId` (for example 11 and 2).
+
+### View the scanned and tagged dependencies from the dependency analysis
+```
+curl localhost:8080/scanned-dependency-lists/11 | jq
+curl localhost:8080/tagged-dependency-lists/2 | jq
+```
+
+### Query the DependencyAnalysis with tags
+```
+curl \
+-X POST http://localhost:8080/queries \
+-H 'Content-Type: application/json; charset=utf-8' \
+--data-binary @- << EOF
+{ 
+  "analysisId": 1, 
+  "queries": [ 
+    { "name": "lombok", "tags": "lombok" }, 
+    { "name": "open-source database", "tags": "open-source, db" } 
+   ]
+}
+EOF
+```
+
+
+### Get metrics about the scanned and tagged dependencies
+```
+curl localhost:8080/dependency-metrics | jq
+```
 
 
 ## Examples of API calls
@@ -167,49 +243,3 @@ curl localhost:8080/dependency-metrics | jq
 ```
 
 
-
-## Tests
-
-### Create a repository of tags for dependencies
-
-```
-curl \
---request POST \
---header "Content-Type: application/json" \
---data '{ "dependencies": [ { "dependency": "org.projectlombok/lombok", "tags": "lombok, open-source" } ] }' \
-http://localhost:8080/tagged-dependency-lists | jq
-```
-
-
-### Write the Maven dependency tree into a file
-
-```
-./mvnw dependency:tree -DoutputFile=dep-tree.txt
-```
-
-
-### Send the Maven dependency tree file to the Analyser API
-
-```
-curl \
-  --request POST \
-  --header "Content-Type: text/plain" \
-  --header "X-DEPAN-PROJECT-NAME: myProjectName" \
-  --header "X-DEPAN-APPLICATION-CODE: myAppCode" \
-  --header "X-DEPAN-ORGANIZAIONAL-UNIT: myOrgUnit" \
-  --data-binary "@dep-tree.txt" \
-  http://localhost:8080/dependency-analysis/maven-dependency-tree/upload-and-run
-```
-Keep in mind the returned `scannedDependencyListId` and `taggedDependencyListId` (for example 11 and 2).
-
-### View the scanned and tagged dependencies from the dependency anaylsis
-```
-curl localhost:8080/scanned-dependency-lists/11 | jq
-curl localhost:8080/tagged-dependency-lists/2 | jq
-```
-
-
-### Get metrics about the scanned and tagged dependencies
-```
-curl localhost:8080/dependency-metrics | jq
-```
